@@ -119,6 +119,33 @@ export const getSingleUser = async (req, res) => {
             user: user,
         })
     } catch (error) {
+        if (error.name == 'CastError') {
+            return ApiValidationResponse(res, 'Invalid Id', 400)
+        }
         ApiCatchResponse(res, 'Error while a getting user', error.message)
+    }
+}
+
+
+export const deleteUser = async (req, res) => {
+    try {
+        const { userId } = req.params
+        if (!userId) {
+            return ApiValidationResponse(res, 'Please provide a user ID', 404)
+        }
+
+        const user = await UserModel.findByIdAndDelete(userId)
+        if (!user) {
+            return ApiValidationResponse(res, 'User not found', 404)
+        }
+        res.status(200).json({
+            success: true,
+            message: `user deleted successfully`,
+        })
+    } catch (error) {
+        if (error.name == 'CastError') {
+            return ApiValidationResponse(res, 'Invalid Id', 400)
+        }
+        ApiCatchResponse(res, 'Error while a deleting user', error.message)
     }
 }
