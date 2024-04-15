@@ -25,11 +25,11 @@ export const registerUser = async (req, res) => {
         // removing the password from the response
         newUser.password = undefined
         res.status(201).json({
-            success : true,
-            message : 'User registered successfully',
-            newUser : newUser,
+            success: true,
+            message: 'User registered successfully',
+            newUser: newUser,
         })
-        
+
         // ApiSuccessResponse(res, 'User register successfully', newUser, 201)
 
     } catch (error) {
@@ -56,9 +56,9 @@ export const loginUser = async (req, res) => {
 
         // compare given password with the hashed
         const isPasswordMatch = await findUser.isPasswordMatched(password)
-        if(!isPasswordMatch){
+        if (!isPasswordMatch) {
             // logger.error('Password mismatch')
-            return ApiValidationResponse(res, 'Invalid credentials' , 404)
+            return ApiValidationResponse(res, 'Invalid credentials', 404)
         }
 
         // removing the password from the response
@@ -69,13 +69,13 @@ export const loginUser = async (req, res) => {
 
         // logger.info('User login successfully')
         res.status(200).json({
-            success : true,
-            message : `Welcome ${findUser.firstName}`,
-            user : findUser,
+            success: true,
+            message: `Welcome ${findUser.firstName}`,
+            user: findUser,
             token
         })
         // ApiSuccessResponse(res, `Welcome ${findUser.firstName}` , findUser, 200)
-        
+
     } catch (error) {
         // logger.error('Error while login user', error.message, { error });
         ApiCatchResponse(res, 'Error while login user', error.message)
@@ -83,20 +83,42 @@ export const loginUser = async (req, res) => {
 }
 
 
-export const getAllUsers = async (req, res) =>{
+export const getAllUsers = async (req, res) => {
     try {
-        const getAllUsers = await UserModel.find()
-        if(!getAllUsers){
-            return ApiValidationResponse(res , 'Users not found' , 404)
+        const getAllUsers = await UserModel.find().select("-password -email")
+        if (!getAllUsers) {
+            return ApiValidationResponse(res, 'Users not found', 404)
         }
 
         res.status(200).json({
-            success : true,
-            message : `Users fetch successfully`,
-            allUsersCount : getAllUsers.length,
-            allUsers : getAllUsers,
+            success: true,
+            message: `Users fetch successfully`,
+            allUsersCount: getAllUsers.length,
+            allUsers: getAllUsers,
         })
     } catch (error) {
-        ApiCatchResponse(res, 'Error while getting users', error.message)        
+        ApiCatchResponse(res, 'Error while getting users', error.message)
+    }
+}
+
+
+export const getSingleUser = async (req, res) => {
+    try {
+        const { userId } = req.params
+        if (!userId) {
+            return ApiValidationResponse(res, 'Please provide a user ID', 404)
+        }
+
+        const user = await UserModel.findById(userId).select("-password -email")
+        if (!user) {
+            return ApiValidationResponse(res, 'User not found', 404)
+        }
+        res.status(200).json({
+            success: true,
+            message: `${user.firstName} profile fetched successfully`,
+            user: user,
+        })
+    } catch (error) {
+        ApiCatchResponse(res, 'Error while a getting user', error.message)
     }
 }
