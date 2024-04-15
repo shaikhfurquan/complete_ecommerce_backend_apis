@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -32,9 +33,18 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'Password is required.'],
-        minlength: [6, 'Password must be at least 6 characters long.']
+        minlength: [3, 'Password must be at least 3 characters long.']
     }
 });
+
+
+userSchema.pre('save' , async function(){
+    this.password = await bcrypt.hash(this.password , 10)
+})
+
+userSchema.methods.isPasswordMatch = async function(enteredPassword){
+    return await bcrypt.compare(enteredPassword , this.password)
+}
 
 const UserModel = mongoose.model('User', userSchema);
 
