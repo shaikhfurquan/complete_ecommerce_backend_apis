@@ -50,10 +50,6 @@ const userSchema = new mongoose.Schema({
         default : []
     },
     address : {
-        type : String,
-
-    },
-    address : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "Address"
     },
