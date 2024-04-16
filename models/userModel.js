@@ -44,7 +44,23 @@ const userSchema = new mongoose.Schema({
         type : String,
         enum : ['admin', 'user'] ,
         default : "user"
-    }
+    },
+    cart : {
+        type : Array,
+        default : []
+    },
+    address : {
+        type : String,
+
+    },
+    address : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Address"
+    },
+    wishlist : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Product"
+    },
 } , {timestamps : true});
 
 
