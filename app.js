@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import { connectDB } from './db/connectDB.js';
 import userRouter from './routes/userRoute.js';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 
 const app = express()
 dotenv.config()
@@ -11,6 +12,7 @@ dotenv.config()
 //express middlewares
 app.use(bodyParser.urlencoded({ extended : false}))
 app.use(express.json())
+app.use(cookieParser())
 app.use(morgan('dev'))
 
 
