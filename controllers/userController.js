@@ -68,7 +68,10 @@ export const loginUser = async (req, res) => {
         // console.log(token);
 
         // logger.info('User login successfully')
-        res.status(200).json({
+        res.status(200).cookie("token", token, {
+            httpOnly: true,
+            secure: true
+        }).json({
             success: true,
             message: `Welcome ${findUser.firstName}`,
             user: findUser,
@@ -147,5 +150,99 @@ export const deleteUser = async (req, res) => {
             return ApiValidationResponse(res, 'Invalid Id', 400)
         }
         ApiCatchResponse(res, 'Error while a deleting user', error.message)
+    }
+}
+
+
+export const updateUser = async (req, res) => {
+    try {
+        // console.log(req.user);
+        const { _id } = req.user
+        if (!_id) {
+            return ApiValidationResponse(res, 'Please provide a user ID', 404)
+        }
+
+        const updatedUser = await UserModel.findByIdAndUpdate(_id, {
+            firstName: req?.body?.firstName,
+            lastName: req?.body?.lastName,
+            email: req?.body?.email,
+            mobile: req?.body?.mobile
+        }, { new: true })
+
+        if (!updatedUser) {
+            return ApiValidationResponse(res, 'User not found', 404)
+        }
+        res.status(200).json({
+            success: true,
+            message: `user updated successfully`,
+            updateUser: updateUser
+        })
+    } catch (error) {
+        if (error.name == 'CastError') {
+            return ApiValidationResponse(res, 'Invalid Id', 400)
+        }
+        ApiCatchResponse(res, 'Error while a updating user', error.message)
+    }
+}
+
+
+export const blockUser = async (req, res) => {
+    try {
+        const { userId } = req.params
+
+        if (!userId) {
+            return ApiValidationResponse(res, 'No UserId Provided', 404);
+        }
+
+        const user = await UserModel.findById(userId)
+        if(user.isBlocked == true){
+            return ApiValidationResponse(res , 'User has already been blocked' , 400)
+        }
+
+        const block = await UserModel.findByIdAndUpdate(userId,
+            { isBlocked: true }, { new: true }
+        ).select('-password')
+        res.status(200).json({
+            success: true,
+            message: 'User blocked successfully',
+            user: block
+        })
+    } catch (error) {
+        if (error.name == 'CastError') {
+            return ApiValidationResponse(res, 'Invalid Id', 400)
+        }
+        ApiCatchResponse(res, 'Error while a blocking user', error.message)
+
+    }
+}
+
+
+export const unblockUser = async (req, res) => {
+    try {
+        const { userId } = req.params
+        console.log(userId);
+        if (!userId) {
+            return ApiValidationResponse(res, 'No UserId Provided', 404);
+        }
+
+        const user = await UserModel.findById(userId)
+        if(user.isBlocked == false){
+            return ApiValidationResponse(res , 'User has already been un-blocked' , 400)
+        }
+
+        const unblock = await UserModel.findByIdAndUpdate(userId,
+            { isBlocked: false }, { new: true }
+        ).select('-password')
+        res.status(200).json({
+            success: true,
+            message: 'User un-blocked successfully',
+            user: unblock
+        })
+    } catch (error) {
+        if (error.name == 'CastError') {
+            return ApiValidationResponse(res, 'Invalid Id', 400)
+        }
+        ApiCatchResponse(res, 'Error while a un-blocking user', error.message)
+
     }
 }
