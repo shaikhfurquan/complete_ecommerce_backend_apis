@@ -4,6 +4,7 @@ import { ApiValidationResponse } from '../utils/ApiValidationResponse.js'
 import { UserModel } from '../models/userModel.js'
 import { logger } from "../utils/logger.js"
 import { generateToken } from "../utils/generateToken.js"
+import { validateMongoDbId } from "../utils/validateMongoDbId.js"
 
 
 export const registerUser = async (req, res) => {
@@ -108,9 +109,7 @@ export const getAllUsers = async (req, res) => {
 export const getSingleUser = async (req, res) => {
     try {
         const { userId } = req.params
-        if (!userId) {
-            return ApiValidationResponse(res, 'Please provide a user ID', 404)
-        }
+        validateMongoDbId(userId)
 
         const user = await UserModel.findById(userId).select("-password -email")
         if (!user) {
@@ -122,9 +121,9 @@ export const getSingleUser = async (req, res) => {
             user: user,
         })
     } catch (error) {
-        if (error.name == 'CastError') {
-            return ApiValidationResponse(res, 'Invalid Id', 400)
-        }
+        // if (error.name == 'CastError') {
+        //     return ApiValidationResponse(res, 'Invalid Id', 400)
+        // }
         ApiCatchResponse(res, 'Error while a getting user', error.message)
     }
 }
@@ -133,9 +132,7 @@ export const getSingleUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     try {
         const { userId } = req.params
-        if (!userId) {
-            return ApiValidationResponse(res, 'Please provide a user ID', 404)
-        }
+        validateMongoDbId(userId)
 
         const user = await UserModel.findByIdAndDelete(userId)
         if (!user) {
@@ -146,9 +143,6 @@ export const deleteUser = async (req, res) => {
             message: `user deleted successfully`,
         })
     } catch (error) {
-        if (error.name == 'CastError') {
-            return ApiValidationResponse(res, 'Invalid Id', 400)
-        }
         ApiCatchResponse(res, 'Error while a deleting user', error.message)
     }
 }
@@ -158,9 +152,7 @@ export const updateUser = async (req, res) => {
     try {
         // console.log(req.user);
         const { _id } = req.user
-        if (!_id) {
-            return ApiValidationResponse(res, 'Please provide a user ID', 404)
-        }
+        validateMongoDbId(_id)
 
         const updatedUser = await UserModel.findByIdAndUpdate(_id, {
             firstName: req?.body?.firstName,
@@ -178,9 +170,6 @@ export const updateUser = async (req, res) => {
             updateUser: updateUser
         })
     } catch (error) {
-        if (error.name == 'CastError') {
-            return ApiValidationResponse(res, 'Invalid Id', 400)
-        }
         ApiCatchResponse(res, 'Error while a updating user', error.message)
     }
 }
@@ -189,10 +178,7 @@ export const updateUser = async (req, res) => {
 export const blockUser = async (req, res) => {
     try {
         const { userId } = req.params
-
-        if (!userId) {
-            return ApiValidationResponse(res, 'No UserId Provided', 404);
-        }
+        validateMongoDbId(userId)
 
         const user = await UserModel.findById(userId)
         if(user.isBlocked == true){
@@ -208,9 +194,6 @@ export const blockUser = async (req, res) => {
             user: block
         })
     } catch (error) {
-        if (error.name == 'CastError') {
-            return ApiValidationResponse(res, 'Invalid Id', 400)
-        }
         ApiCatchResponse(res, 'Error while a blocking user', error.message)
 
     }
@@ -220,10 +203,7 @@ export const blockUser = async (req, res) => {
 export const unblockUser = async (req, res) => {
     try {
         const { userId } = req.params
-        console.log(userId);
-        if (!userId) {
-            return ApiValidationResponse(res, 'No UserId Provided', 404);
-        }
+        validateMongoDbId(userId)
 
         const user = await UserModel.findById(userId)
         if(user.isBlocked == false){
@@ -239,10 +219,6 @@ export const unblockUser = async (req, res) => {
             user: unblock
         })
     } catch (error) {
-        if (error.name == 'CastError') {
-            return ApiValidationResponse(res, 'Invalid Id', 400)
-        }
         ApiCatchResponse(res, 'Error while a un-blocking user', error.message)
-
     }
 }
