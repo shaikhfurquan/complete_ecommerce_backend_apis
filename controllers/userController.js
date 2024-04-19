@@ -5,6 +5,8 @@ import { UserModel } from '../models/userModel.js'
 import { logger } from "../utils/logger.js"
 import { generateToken } from "../utils/generateToken.js"
 import { validateMongoDbId } from "../utils/validateMongoDbId.js"
+import { generateRefreshToken } from "../utils/refreshToken.js"
+import JWT from 'jsonwebtoken'
 
 
 export const registerUser = async (req, res) => {
@@ -62,6 +64,9 @@ export const loginUser = async (req, res) => {
             return ApiValidationResponse(res, 'Invalid credentials', 404)
         }
 
+        const refreshToken = await generateRefreshToken(findUser?._id)
+        const updatedUser = await UserModel.findByIdAndUpdate(findUser?._id,
+            { refreshToken: refreshToken }, { new: true })
         // removing the password from the response
         findUser.password = undefined
 
@@ -71,7 +76,12 @@ export const loginUser = async (req, res) => {
         // logger.info('User login successfully')
         res.status(200).cookie("token", token, {
             httpOnly: true,
-            secure: true
+            secure: true,
+            maxAge: 3 * 60 * 60 * 1000     // 3 days
+        }).cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            maxAge: 5 * 24 * 60 * 60 * 1000       // 5 days
         }).json({
             success: true,
             message: `Welcome ${findUser.firstName}`,
@@ -83,6 +93,70 @@ export const loginUser = async (req, res) => {
     } catch (error) {
         // logger.error('Error while login user', error.message, { error });
         ApiCatchResponse(res, 'Error while login user', error.message)
+    }
+}
+
+
+// handle refresh token
+export const handleRefreshToken = async (req, res) => {
+    try {
+        const cookie = req.cookies
+        // console.log(cookie);
+        if (!cookie?.refreshToken) {
+            throw new Error('No refresh token in cookies')
+        }
+        const refreshToken = cookie.refreshToken;
+        // console.log('refreshToken', refreshToken);
+
+        const user = await UserModel.findOne({ refreshToken })
+        // console.log(user);
+        if (!user) {
+            throw new Error('No refresh token present in the db or not matched')
+        }
+      
+        JWT.verify(refreshToken , process.env.JWT_REFRESH_SECRET , (err , decoded) =>{
+            // console.log("decoded --> _id" , decoded);
+            if(err || user._id !== decoded._id){
+                throw new Error('There is something went wrong with the refresh token')
+            }
+        })
+
+        const accessToken = generateToken(user?._id)
+        console.log("accessToken", accessToken);
+        res.status(200).json({
+            success: true,
+            accessToken: accessToken
+
+        })
+    } catch (error) {
+        ApiCatchResponse(res, 'Error while fetching refresh token with cookie', error.message)
+    }
+}
+
+
+export const updateUser = async (req, res) => {
+    try {
+        // console.log(req.user);
+        const { _id } = req.user
+        validateMongoDbId(_id)
+
+        const updatedUser = await UserModel.findByIdAndUpdate(_id, {
+            firstName: req?.body?.firstName,
+            lastName: req?.body?.lastName,
+            email: req?.body?.email,
+            mobile: req?.body?.mobile
+        }, { new: true })
+
+        if (!updatedUser) {
+            return ApiValidationResponse(res, 'User not found', 404)
+        }
+        res.status(200).json({
+            success: true,
+            message: `user updated successfully`,
+            updateUser: updateUser
+        })
+    } catch (error) {
+        ApiCatchResponse(res, 'Error while a updating user', error.message)
     }
 }
 
@@ -148,41 +222,14 @@ export const deleteUser = async (req, res) => {
 }
 
 
-export const updateUser = async (req, res) => {
-    try {
-        // console.log(req.user);
-        const { _id } = req.user
-        validateMongoDbId(_id)
-
-        const updatedUser = await UserModel.findByIdAndUpdate(_id, {
-            firstName: req?.body?.firstName,
-            lastName: req?.body?.lastName,
-            email: req?.body?.email,
-            mobile: req?.body?.mobile
-        }, { new: true })
-
-        if (!updatedUser) {
-            return ApiValidationResponse(res, 'User not found', 404)
-        }
-        res.status(200).json({
-            success: true,
-            message: `user updated successfully`,
-            updateUser: updateUser
-        })
-    } catch (error) {
-        ApiCatchResponse(res, 'Error while a updating user', error.message)
-    }
-}
-
-
 export const blockUser = async (req, res) => {
     try {
         const { userId } = req.params
         validateMongoDbId(userId)
 
         const user = await UserModel.findById(userId)
-        if(user.isBlocked == true){
-            return ApiValidationResponse(res , 'User has already been blocked' , 400)
+        if (user.isBlocked == true) {
+            return ApiValidationResponse(res, 'User has already been blocked', 400)
         }
 
         const block = await UserModel.findByIdAndUpdate(userId,
@@ -206,8 +253,8 @@ export const unblockUser = async (req, res) => {
         validateMongoDbId(userId)
 
         const user = await UserModel.findById(userId)
-        if(user.isBlocked == false){
-            return ApiValidationResponse(res , 'User has already been un-blocked' , 400)
+        if (user.isBlocked == false) {
+            return ApiValidationResponse(res, 'User has already been un-blocked', 400)
         }
 
         const unblock = await UserModel.findByIdAndUpdate(userId,
