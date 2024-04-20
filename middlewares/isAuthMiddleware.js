@@ -25,7 +25,7 @@ const isAuthenticated = async (req, res, next) => {
             // console.log(findUser);
             next()
         } else {
-            return ApiValidationResponse(res, 'Token required', 404)
+            return ApiValidationResponse(res, 'Token required, Please login.', 404)
         }
 
     } catch (error) {
