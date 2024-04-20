@@ -113,10 +113,10 @@ export const handleRefreshToken = async (req, res) => {
         if (!user) {
             throw new Error('No refresh token present in the db or not matched')
         }
-      
-        JWT.verify(refreshToken , process.env.JWT_REFRESH_SECRET , (err , decoded) =>{
+
+        JWT.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
             // console.log("decoded --> _id" , decoded);
-            if(err || user._id !== decoded._id){
+            if (err || user._id !== decoded._id) {
                 throw new Error('There is something went wrong with the refresh token')
             }
         })
@@ -130,6 +130,36 @@ export const handleRefreshToken = async (req, res) => {
         })
     } catch (error) {
         ApiCatchResponse(res, 'Error while fetching refresh token with cookie', error.message)
+    }
+}
+
+
+export const logoutUser = async (req, res) => {
+    try {
+        // console.log(req.cookies);
+        const cookie = req.cookies;
+        if (!cookie?.refreshToken) {
+            throw new Error('No refresh token in cookies')
+        }
+        const refreshToken = cookie.refreshToken
+        const user = await UserModel.findOne({ refreshToken })
+        if (!user) {
+            res.clearCookie('refreshToken', { httpOnly: true, secure: true })
+                .clearCookie('token', { httpOnly: true, secure: true });
+            res.sendStatus(204);
+        }
+        await UserModel.findOneAndUpdate({ refreshToken }, {
+            refreshToken: ""
+        })
+        res.clearCookie('refreshToken', { httpOnly: true, secure: true })
+            .clearCookie('token', { httpOnly: true, secure: true });
+
+        res.status(200).json({
+            success: true,
+            message: "User log-out successfully"
+        })
+    } catch (error) {
+        ApiCatchResponse(res, 'Error while logout user', error.message)
     }
 }
 
