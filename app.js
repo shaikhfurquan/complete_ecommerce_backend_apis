@@ -5,6 +5,7 @@ import { connectDB } from './db/connectDB.js';
 import userRouter from './routes/userRoute.js';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import productRouter from './routes/productRoute.js';
 
 const app = express()
 dotenv.config()
@@ -18,6 +19,7 @@ app.use(morgan('dev'))
 
 // routes
 app.use('/api/v1/users', userRouter)
+app.use('/api/v1/products', productRouter)
 
 
 // Database configuration
