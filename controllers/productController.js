@@ -6,13 +6,13 @@ import { ProductModel } from "../models/productModel.js"
 import { validateMongoDbId } from "../utils/validateMongoDbId.js"
 
 
-export const createProduct = async (req, res) =>{
+export const createProduct = async (req, res) => {
     try {
         const newProduct = await ProductModel.create(req.body)
         res.json({
-            success : true,
-            message : "Product created successfully",
-            newProduct : newProduct
+            success: true,
+            message: "Product created successfully",
+            newProduct: newProduct
         })
     } catch (error) {
         ApiCatchResponse(res, 'Error while creating product', error.message)
@@ -20,16 +20,32 @@ export const createProduct = async (req, res) =>{
 }
 
 
-export const getaProduct = async (req, res) =>{
+export const getaProduct = async (req, res) => {
     try {
-        const { productId} = req.params
+        const { productId } = req.params
+        validateMongoDbId(productId)
         const getaProduct = await ProductModel.findById(productId)
         res.json({
-            success : true,
-            message : "Product fetched successfully",
-            getProduct : getaProduct
+            success: true,
+            message: "Product fetched successfully",
+            getProduct: getaProduct
         })
     } catch (error) {
         ApiCatchResponse(res, 'Error while fetching product', error.message)
+    }
+}
+
+
+export const getAllProducts = async (req, res) => {
+    try {
+        const getAllProducts = await ProductModel.find()
+        res.json({
+            success: true,
+            message: "Products fetched successfully",
+            allProductsCount : getAllProducts.length,
+            allProducts : getAllProducts
+        })
+    } catch (error) {
+        ApiCatchResponse(res, 'Error while fetching all products', error.message)
     }
 }
