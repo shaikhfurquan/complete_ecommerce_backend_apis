@@ -31,11 +31,12 @@ const productSchema = new mongoose.Schema({
     },
     brand: {
         type: String,
-        required: [true, 'Brand is required'],
-        enum: ['Apple', 'Samsung', 'Blackbery', 'Lenovo']
+        // required: [true, 'Brand is required'],
+        // enum: ['Apple', 'Samsung', 'Blackbery', 'Lenovo']
     },
     quantity: {
         type: Number,
+        required : [true , 'Quantity is required'],
         min: [0, 'Quantity must be a positive number'],
     },
     sold: {
