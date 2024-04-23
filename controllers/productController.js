@@ -18,3 +18,18 @@ export const createProduct = async (req, res) =>{
         ApiCatchResponse(res, 'Error while creating product', error.message)
     }
 }
+
+
+export const getaProduct = async (req, res) =>{
+    try {
+        const { productId} = req.params
+        const getaProduct = await ProductModel.findById(productId)
+        res.json({
+            success : true,
+            message : "Product fetched successfully",
+            getProduct : getaProduct
+        })
+    } catch (error) {
+        ApiCatchResponse(res, 'Error while fetching product', error.message)
+    }
+}
