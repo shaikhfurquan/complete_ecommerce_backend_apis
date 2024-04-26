@@ -183,7 +183,7 @@ export const updateUser = async (req, res) => {
         res.status(200).json({
             success: true,
             message: `user updated successfully`,
-            updateUser: updateUser
+            updatedUser: updatedUser
         })
     } catch (error) {
         ApiCatchResponse(res, 'Error while a updating user', error.message)
