@@ -73,3 +73,18 @@ export const updateProduct = async (req, res) => {
         ApiCatchResponse(res, 'Error while updating the product', error.message)
     }
 }
+
+
+export const deleteProduct = async (req, res) => {
+    try {
+        const productId = req.params.productId
+        const deleteProduct = await ProductModel.findByIdAndDelete( productId )
+
+        res.json({
+            success: true,
+            message: "Products deleted successfully",
+        })
+    } catch (error) {
+        ApiCatchResponse(res, 'Error while deleting the product', error.message)
+    }
+}

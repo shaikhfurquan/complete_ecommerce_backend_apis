@@ -29,3 +29,7 @@ UPDATE PRODUCT
 {
     "title" : "r7"
 }
+
+
+DELETE PRODUCT
+    DELETE ==>   localhost:6060/api/v1/products/delete/662762e1b8cebc8be01fb5d6
