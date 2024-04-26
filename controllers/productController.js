@@ -9,7 +9,7 @@ import { validateMongoDbId } from "../utils/validateMongoDbId.js"
 
 export const createProduct = async (req, res) => {
     try {
-        if(req.body.title){
+        if (req.body.title) {
             req.body.slug = slugify(req.body.title)
         }
         const newProduct = await ProductModel.create(req.body)
@@ -46,10 +46,30 @@ export const getAllProducts = async (req, res) => {
         res.json({
             success: true,
             message: "Products fetched successfully",
-            allProductsCount : getAllProducts.length,
-            allProducts : getAllProducts
+            allProductsCount: getAllProducts.length,
+            allProducts: getAllProducts
         })
     } catch (error) {
         ApiCatchResponse(res, 'Error while fetching all products', error.message)
+    }
+}
+
+
+export const updateProduct = async (req, res) => {
+    try {
+        const productId = req.params.productId
+        if (req.body.title) {
+            req.body.slug = req.body.title
+        }
+        console.log(productId);
+        const updateProduct = await ProductModel.findByIdAndUpdate( productId , req.body , { new: true })
+
+        res.json({
+            success: true,
+            message: "Products updated successfully",
+            updatedProduct: updateProduct
+        })
+    } catch (error) {
+        ApiCatchResponse(res, 'Error while updating the product', error.message)
     }
 }

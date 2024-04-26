@@ -22,3 +22,10 @@ GET A PRODUCT
 
 GET ALL PRODUCTS
     GET  ==>  localhost:6060/api/v1/products/get-all
+
+
+UPDATE PRODUCT
+    PUT  ==>  localhost:6060/api/v1/products/update/662762e1b8cebc8be01fb5d6
+{
+    "title" : "r7"
+}
