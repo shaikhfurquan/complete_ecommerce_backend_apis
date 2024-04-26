@@ -30,6 +30,11 @@ GET A USER
     GET  ==>  localhost:6060/api/v1/users/get/661cf57faebce05f3d83bef8
 
 
+GET USER PROFILE
+    GET  ==>  localhost:6060/api/v1/users/my-profile
+
+
+
 DELETE A USER
     DELETE  ==>  localhost:6060/api/v1/users/delete/661cfd9a474fcd19830b26c8
 

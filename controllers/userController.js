@@ -210,6 +210,24 @@ export const getAllUsers = async (req, res) => {
 }
 
 
+export const getMyProfile = async (req, res) => {
+    try {
+        const getMyProfile = await UserModel.findById(req.user._id).select("-password -email")
+        if (!getMyProfile) {
+            return ApiValidationResponse(res, 'Users not found', 404)
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Profile fetch successfully`,
+            myProfile : getMyProfile
+        })
+    } catch (error) {
+        ApiCatchResponse(res, 'Error while getting users', error.message)
+    }
+}
+
+
 export const getSingleUser = async (req, res) => {
     try {
         const { userId } = req.params
