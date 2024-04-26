@@ -1,0 +1,59 @@
+
+USERS APIS INFO:-
+
+REGITSER USER
+    POST ==> localhost:6060/api/v1/users/register
+
+{
+    "firstName" : "kp",
+    "lastName" : "kp",
+    "mobile" : "7769",
+    "email" : "kp@gmail.com",
+    "password" : "123",
+    "role" : "admin"
+}
+
+
+LOGIN USER
+    POST ==>  localhost:6060/api/v1/users/login
+{
+    "email" : "kp@gmail.com",
+    "password" : "123"
+}
+
+
+GET ALL USERS
+    GET ==>  localhost:6060/api/v1/users/get-all
+
+
+GET A USER
+    GET  ==>  localhost:6060/api/v1/users/get/661cf57faebce05f3d83bef8
+
+
+DELETE A USER
+    DELETE  ==>  localhost:6060/api/v1/users/delete/661cfd9a474fcd19830b26c8
+
+
+UPDATE A USER
+    PUT  ==>  localhost:6060/api/v1/users/update
+
+{
+    "mobile" : "8379"
+}
+
+
+BLOCK A USER
+    PUT  ==>  localhost:6060/api/v1/users/block-user/6620c54172dccd057fbb0c36
+
+
+UN-BLOCK A USER
+    PUT  ==>  localhost:6060/api/v1/users/unblock-user/6620c54172dccd057fbb0c36
+
+
+GET REFRESH TOKEN
+    GET  ==>  localhost:6060/api/v1/users/refresh
+
+
+LOGOUT USER
+    GE  ==>  localhost:6060/api/v1/users/logout
+
