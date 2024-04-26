@@ -1,3 +1,4 @@
+import slugify from "slugify"
 import { ApiCatchResponse } from "../utils/ApiCatchResponse.js"
 import { ApiSuccessResponse } from "../utils/ApiSuccessResponse.js"
 import { ApiValidationResponse } from '../utils/ApiValidationResponse.js'
@@ -8,6 +9,9 @@ import { validateMongoDbId } from "../utils/validateMongoDbId.js"
 
 export const createProduct = async (req, res) => {
     try {
+        if(req.body.title){
+            req.body.slug = slugify(req.body.title)
+        }
         const newProduct = await ProductModel.create(req.body)
         res.json({
             success: true,
