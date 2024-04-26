@@ -1,0 +1,24 @@
+
+PRODUCTS APIS
+
+
+CREATE PRODUCT
+    POST  ==>  localhost:6060/api/v1/products/create
+    
+{
+    "title" :  "samsung laptop",
+    "category" : "laptop",
+    "brand" : "samsung",
+    "description" : "Realme mobile",
+    "price" : "15000",
+    "quantity" : 20,
+    "color" : "silver"
+}
+
+
+GET A PRODUCT
+    GET  ==>  localhost:6060/api/v1/products/get/662762e1b8cebc8be01fb5d6
+
+
+GET ALL PRODUCTS
+    GET  ==>  localhost:6060/api/v1/products/get-all
