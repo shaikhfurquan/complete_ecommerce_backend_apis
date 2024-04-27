@@ -58,10 +58,12 @@ export const getAllProducts = async (req, res) => {
 export const updateProduct = async (req, res) => {
     try {
         const productId = req.params.productId
+        validateMongoDbId(productId)
         if (req.body.title) {
             req.body.slug = req.body.title
         }
-        console.log(productId);
+        // console.log(productId);
+
         const updateProduct = await ProductModel.findByIdAndUpdate( productId , req.body , { new: true })
 
         res.json({
@@ -78,6 +80,7 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
     try {
         const productId = req.params.productId
+        validateMongoDbId(productId)
         const deleteProduct = await ProductModel.findByIdAndDelete( productId )
 
         res.json({
