@@ -42,12 +42,35 @@ export const getaProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
     try {
-        const getAllProducts = await ProductModel.find()
+        // const startTime = performance.now(); // Start measuring time
+        // const getAllProducts = await ProductModel.find();
+        // const endTime = performance.now(); // End measuring time
+        // const executionTime = endTime - startTime; // Calculate execution time in milliseconds
+        
+        // Filtering
+        const queryObject = { ...req.query }
+        const excludeFields = ["page" , "sort" , "limit" , "fields"]
+        excludeFields.forEach((elem) => delete queryObject[elem])
+        // console.log(queryObject);   // { price: { gte: '100' } }
+        
+
+        // console.log("modified==>",queryObject ,"original==>" ,req.query);
+        // modified==> { brand: 'hp', category: 'watch' } 
+        // original==> { brand: 'hp', category: 'watch', sort: 'price' }
+
+        let queryStr = JSON.stringify(queryObject); // '{"price":{"gte":10}}'
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+        // console.log(JSON.parse(queryStr));  //{ price: { '$gte': '100' } }
+
+        let query = ProductModel.findOne(JSON.parse(queryStr));
+
+
+        const product = await ProductModel.find(query).collation({ locale: 'en', strength: 2 })
         res.json({
             success: true,
             message: "Products fetched successfully",
-            allProductsCount: getAllProducts.length,
-            allProducts: getAllProducts
+            productCount: product.length,
+            product: product
         })
     } catch (error) {
         ApiCatchResponse(res, 'Error while fetching all products', error.message)
@@ -64,7 +87,7 @@ export const updateProduct = async (req, res) => {
         }
         // console.log(productId);
 
-        const updateProduct = await ProductModel.findByIdAndUpdate( productId , req.body , { new: true })
+        const updateProduct = await ProductModel.findByIdAndUpdate(productId, req.body, { new: true })
 
         res.json({
             success: true,
@@ -81,7 +104,7 @@ export const deleteProduct = async (req, res) => {
     try {
         const productId = req.params.productId
         validateMongoDbId(productId)
-        const deleteProduct = await ProductModel.findByIdAndDelete( productId )
+        const deleteProduct = await ProductModel.findByIdAndDelete(productId)
 
         res.json({
             success: true,
