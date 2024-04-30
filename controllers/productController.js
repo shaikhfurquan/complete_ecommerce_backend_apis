@@ -65,6 +65,15 @@ export const getAllProducts = async (req, res) => {
         let query = ProductModel.findOne(JSON.parse(queryStr));
 
 
+        // Sorting
+        if(req.query.sort){
+            const sortBy = req.query.sort.split(',').join(' ')
+            query =  query.sort(sortBy)
+        }else{
+            query = query.sort('-createdAt')
+        }
+
+
         const product = await ProductModel.find(query).collation({ locale: 'en', strength: 2 })
         res.json({
             success: true,

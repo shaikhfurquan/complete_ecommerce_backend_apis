@@ -1,7 +1,6 @@
 
 PRODUCTS APIS
 
-
 CREATE PRODUCT
     POST  ==>  localhost:6060/api/v1/products/create
     
@@ -20,6 +19,7 @@ GET A PRODUCT
     GET  ==>  localhost:6060/api/v1/products/get/662762e1b8cebc8be01fb5d6
 
 
+
 GET ALL PRODUCTS
     GET  ==>  localhost:6060/api/v1/products/get-all
 
@@ -28,14 +28,23 @@ GET ALL PRODUCTS
     GET ==> localhost:6060/api/v1/products/get-all?price[gte]=10000
     GET ==> localhost:6060/api/v1/products/get-all?price[gte]=55000&price[lte]=80000
 
+    SORTING
+    GET ==> localhost:6060/api/v1/products/get-all?sort=-category
+    GET ==> localhost:6060/api/v1/products/get-all?sort=category,brand
+    GET ==> localhost:6060/api/v1/products/get-all?sort=category,-brand
+    GET ==> localhost:6060/api/v1/products/get-all?sort=-category,-brand
+
 curl --location --globoff 'localhost:6060/api/v1/products/get-all?price[gte]=55000&price[lte]=80000' \
 --header 'Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjIwYzU0MTcyZGNjZDA1N2ZiYjBjMzYiLCJpYXQiOjE3MTQ0NjE4MDUsImV4cCI6MTcxNDg5MzgwNX0.d7NTyAHHc46uupTOtV_pemsHlibUQjy3K_N2bRlVR34'
+
+
 
 UPDATE PRODUCT
     PUT  ==>  localhost:6060/api/v1/products/update/662762e1b8cebc8be01fb5d6
 {
     "title" : "r7"
 }
+
 
 
 DELETE PRODUCT
