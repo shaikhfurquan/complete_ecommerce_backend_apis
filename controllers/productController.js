@@ -62,8 +62,7 @@ export const getAllProducts = async (req, res) => {
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
         // console.log(JSON.parse(queryStr));  //{ price: { '$gte': '100' } }
 
-        let query = ProductModel.findOne(JSON.parse(queryStr));
-
+        let query = ProductModel.find(JSON.parse(queryStr));
 
         // Sorting
         if(req.query.sort){
@@ -73,6 +72,14 @@ export const getAllProducts = async (req, res) => {
             query = query.sort('-createdAt')
         }
 
+
+        // Limiting
+        if(req.query.fields){
+            const fields = req.query.fields.split(",").join(" ")
+            query = query.select(fields)
+        }else{
+            query = query.select('__v')
+        }
 
         const product = await ProductModel.find(query).collation({ locale: 'en', strength: 2 })
         res.json({
