@@ -37,6 +37,11 @@ GET ALL PRODUCTS
     LIMITING
     GET ==> localhost:6060/api/v1/products/get-all?fields=title,price,category
 
+    PAGINATION
+    GET ==>  localhost:6060/api/v1/products/get-all?page=1&limit=3
+    GET ==>  localhost:6060/api/v1/products/get-all?page=3&limit=4
+    GET ==>  localhost:6060/api/v1/products/get-all?page=2&limit=4
+
 curl --location --globoff 'localhost:6060/api/v1/products/get-all?price[gte]=55000&price[lte]=80000' \
 --header 'Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjIwYzU0MTcyZGNjZDA1N2ZiYjBjMzYiLCJpYXQiOjE3MTQ0NjE4MDUsImV4cCI6MTcxNDg5MzgwNX0.d7NTyAHHc46uupTOtV_pemsHlibUQjy3K_N2bRlVR34'
 
