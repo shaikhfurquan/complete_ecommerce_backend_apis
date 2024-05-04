@@ -59,6 +59,22 @@ GET REFRESH TOKEN
     GET  ==>  localhost:6060/api/v1/users/refresh
 
 
+
 LOGOUT USER
     GE  ==>  localhost:6060/api/v1/users/logout
 
+
+
+UPDATE PASSWORD
+    PUT  ==>  localhost:6060/api/v1/users/update-password
+
+{
+    "password" : "123"
+}
+
+curl --location --request PUT 'localhost:6060/api/v1/users/update-password' \
+--header 'Content-Type: application/json' \
+--header 'Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjIwYzU0MTcyZGNjZDA1N2ZiYjBjMzYiLCJpYXQiOjE3MTQ4MDg0NDIsImV4cCI6MTcxNTI0MDQ0Mn0.SnXfm8QXskXmnQmZy__uaR5zxrgz8RavlQqNttUkZHI; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjIwYzU0MTcyZGNjZDA1N2ZiYjBjMzYiLCJpYXQiOjE3MTQ4MDg0NDIsImV4cCI6MTcxNTA2NzY0Mn0.iy7zlqXtfzaRGvpM2ADW54G8TxsyzPQthYwDfkIG3S8' \
+--data '{
+    "password" : "123"
+}'

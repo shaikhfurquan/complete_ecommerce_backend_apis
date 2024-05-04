@@ -1,5 +1,5 @@
 import express from 'express';
-import { blockUser, deleteUser, getAllUsers, getMyProfile, getSingleUser, handleRefreshToken, loginUser, logoutUser, registerUser, unblockUser, updateUser } from '../controllers/userController.js';
+import { blockUser, deleteUser, getAllUsers, getMyProfile, getSingleUser, handleRefreshToken, loginUser, logoutUser, registerUser, unblockUser, updatePassword, updateUser } from '../controllers/userController.js';
 import { isAdmin, isAuthenticated } from '../middlewares/isAuthMiddleware.js';
 
 const userRouter = express.Router();
@@ -23,6 +23,8 @@ userRouter.get('/logout' , isAuthenticated , logoutUser)
 userRouter.put('/update', isAuthenticated , updateUser)
 userRouter.put('/block-user/:userId', isAuthenticated , isAdmin, blockUser)
 userRouter.put('/unblock-user/:userId', isAuthenticated , isAdmin, unblockUser)
+
+userRouter.put('/update-password', isAuthenticated , updatePassword)
 
 
 export default userRouter

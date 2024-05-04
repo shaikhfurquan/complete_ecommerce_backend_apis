@@ -220,7 +220,7 @@ export const getMyProfile = async (req, res) => {
         res.status(200).json({
             success: true,
             message: `Profile fetch successfully`,
-            myProfile : getMyProfile
+            myProfile: getMyProfile
         })
     } catch (error) {
         ApiCatchResponse(res, 'Error while getting users', error.message)
@@ -317,3 +317,30 @@ export const unblockUser = async (req, res) => {
         ApiCatchResponse(res, 'Error while a un-blocking user', error.message)
     }
 }
+
+
+export const updatePassword = async (req, res) => {
+    const { _id } = req.user
+    const { password } = req.body
+    console.log(req.body);
+    validateMongoDbId(_id)
+    const user = await UserModel.findById(_id)
+    if (!user) {
+        return ApiValidationResponse(res, 'User not found', 400)
+    }
+    if (password) {
+        user.password = password
+        const updatedPassword = await user.save()
+        res.status(200).json({
+            success: true,
+            message: 'Password updated successfully',
+            updatedPassword: updatedPassword
+        })
+    } else {
+        res.status(200).json({
+            success: true,
+            user: user
+        })
+    }
+}
+
